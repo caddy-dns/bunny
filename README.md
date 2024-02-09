@@ -3,8 +3,6 @@ Bunny.net module for Caddy
 
 This package contains a DNS provider module for [Caddy](https://github.com/caddyserver/caddy). It can be used to manage DNS records with Bunny.net accounts.
 
-Maintained by [Rewilok](https://www.rewilok.com) people.
-
 ## Caddy module name
 
 ```
