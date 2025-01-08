@@ -20,7 +20,8 @@ To use this module for the ACME DNS challenge, [configure the ACME issuer in you
 		"dns": {
 			"provider": {
 				"name": "bunny",
-				"access_key": "{env.BUNNY_API_KEY}"
+				"access_key": "{env.BUNNY_API_KEY}",
+				"debug": "{env.BUNNY_DEBUG}"
 			}
 		}
 	}

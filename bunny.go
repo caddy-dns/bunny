@@ -1,6 +1,9 @@
 package bunny
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/libdns/bunny"
@@ -31,6 +34,7 @@ func (p *Provider) Provision(ctx caddy.Context) error {
 //
 //	bunny [<access_token>] {
 //	    access_key <access_token>
+//	    debug <true|false>
 //	}
 //
 // Expansion of placeholders in the API token is left to the JSON config caddy.Provisioner (above).
@@ -40,7 +44,11 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 			p.Provider.AccessKey = d.Val()
 		}
 		if d.NextArg() {
-			return d.ArgErr()
+			if strings.EqualFold(d.Val(), "debug") {
+				p.Provider.Debug = true
+			} else {
+				return d.ArgErr()
+			}
 		}
 		for nesting := d.Nesting(); d.NextBlock(nesting); {
 			switch d.Val() {
@@ -49,6 +57,15 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 					return d.Err("Access key already set")
 				}
 				p.Provider.AccessKey = d.Val()
+				if d.NextArg() {
+					return d.ArgErr()
+				}
+			case "debug":
+				debug, err := strconv.ParseBool(d.Val())
+				if err != nil {
+					return d.Errf("parsing debug: %v", err)
+				}
+				p.Provider.Debug = debug
 				if d.NextArg() {
 					return d.ArgErr()
 				}
