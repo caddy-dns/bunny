@@ -53,19 +53,18 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 		for nesting := d.Nesting(); d.NextBlock(nesting); {
 			switch d.Val() {
 			case "access_key":
-				if p.Provider.AccessKey != "" {
-					return d.Err("Access key already set")
+				if d.NextArg() {
+					p.Provider.AccessKey = d.Val()
 				}
-				p.Provider.AccessKey = d.Val()
 				if d.NextArg() {
 					return d.ArgErr()
 				}
 			case "debug":
-				debug, err := strconv.ParseBool(d.Val())
-				if err != nil {
-					return d.Errf("parsing debug: %v", err)
+				if d.NextArg() {
+					if debug, err := strconv.ParseBool(d.Val()); err == nil {
+						p.Provider.Debug = debug
+					}
 				}
-				p.Provider.Debug = debug
 				if d.NextArg() {
 					return d.ArgErr()
 				}
