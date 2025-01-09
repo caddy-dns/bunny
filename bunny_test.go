@@ -11,51 +11,33 @@ import (
 )
 
 type testCase struct {
-	config          string
-	setenvAccessKey string
-	setenvDebug     string
-	expectAccessKey string
-	expectDebug     bool
+	input  string
+	setenv string
+	expect string
 }
 
 func TestUnmarshalCaddyFile(t *testing.T) {
 	tests := []testCase{
 		{
-			config: `bunny {
+			input: `bunny {
 				access_key A123
-				debug {env.BUNNY_DEBUG}
 			}`,
-			setenvDebug:     "1",
-			expectAccessKey: "A123",
-			expectDebug:     true,
+			expect: "A123",
 		}, {
-			config: `bunny {
+			input: `bunny {
 				access_key {env.BUNNY_ACCESS_KEY}
-				debug 1
 			}`,
-			setenvAccessKey: "321",
-			expectAccessKey: "321",
-			expectDebug:     true,
+			setenv: "321",
+			expect: "321",
 		}, {
-			config: `bunny {
-				access_key A123
-			}`,
-			expectAccessKey: "A123",
-			expectDebug:     false,
-		}, {
-			config:          "bunny A123",
-			expectAccessKey: "A123",
-			expectDebug:     false,
-		}, {
-			config:          "bunny A123 DeBug",
-			expectAccessKey: "A123",
-			expectDebug:     true,
+			input:  `bunny 123`,
+			expect: "123",
 		},
 	}
 
 	for i, tc := range tests {
 		t.Run(fmt.Sprintf("test case %d", i), func(t *testing.T) {
-			dispenser := caddyfile.NewTestDispenser(tc.config)
+			dispenser := caddyfile.NewTestDispenser(tc.input)
 			p := Provider{Provider: &bunny.Provider{}}
 
 			err := p.UnmarshalCaddyfile(dispenser)
@@ -64,8 +46,7 @@ func TestUnmarshalCaddyFile(t *testing.T) {
 				return
 			}
 
-			os.Setenv("BUNNY_ACCESS_KEY", tc.setenvAccessKey)
-			os.Setenv("BUNNY_DEBUG", tc.setenvDebug)
+			os.Setenv("BUNNY_ACCESS_KEY", tc.setenv)
 
 			err = p.Provision(caddy.Context{})
 			if err != nil {
@@ -73,12 +54,8 @@ func TestUnmarshalCaddyFile(t *testing.T) {
 				return
 			}
 
-			if tc.expectAccessKey != p.Provider.AccessKey {
-				t.Errorf("Expected AccessKey to be '%s' but got '%s'", tc.expectAccessKey, p.Provider.AccessKey)
-			}
-
-			if tc.expectDebug != p.Provider.Debug {
-				t.Errorf("Expected Debug to be '%t' but got '%t'", tc.expectDebug, p.Provider.Debug)
+			if tc.expect != p.Provider.AccessKey {
+				t.Errorf("Expected AccessKey to be '%s' but got '%s'", tc.expect, p.Provider.AccessKey)
 			}
 		})
 	}

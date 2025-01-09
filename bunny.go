@@ -1,19 +1,13 @@
 package bunny
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/libdns/bunny"
 )
 
 // Provider lets Caddy read and manipulate DNS records hosted by this DNS provider.
-type Provider struct {
-	*bunny.Provider
-	debug string
-}
+type Provider struct{ *bunny.Provider }
 
 func init() {
 	caddy.RegisterModule(Provider{})
@@ -23,19 +17,15 @@ func init() {
 func (Provider) CaddyModule() caddy.ModuleInfo {
 	return caddy.ModuleInfo{
 		ID:  "dns.providers.bunny",
-		New: func() caddy.Module { return &Provider{Provider: new(bunny.Provider)} },
+		New: func() caddy.Module { return &Provider{new(bunny.Provider)} },
 	}
 }
 
 // Provision sets up the module. Implements caddy.Provisioner.
 func (p *Provider) Provision(ctx caddy.Context) error {
 	p.Provider.AccessKey = caddy.NewReplacer().ReplaceAll(p.Provider.AccessKey, "")
-	p.debug = caddy.NewReplacer().ReplaceAll(p.debug, "false")
-	if debug, err := strconv.ParseBool(p.debug); err == nil {
-		p.Provider.Debug = debug
-	}
 
-	// Set up the logger
+	// Set up the logger. This will automatically enable debug in the provider.
 	p.Logger = func(msg string) {
 		ctx.Logger(p).Debug(msg)
 	}
@@ -44,9 +34,8 @@ func (p *Provider) Provision(ctx caddy.Context) error {
 
 // UnmarshalCaddyfile sets up the DNS provider from Caddyfile tokens. Syntax:
 //
-//	bunny [<access_token>] [debug] {
+//	bunny [<access_token>] {
 //	    access_key <access_token>
-//	    debug <true|false>
 //	}
 //
 // Expansion of placeholders in the API token is left to the JSON config caddy.Provisioner (above).
@@ -56,28 +45,13 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 			p.Provider.AccessKey = d.Val()
 		}
 		if d.NextArg() {
-			if strings.EqualFold(d.Val(), "debug") {
-				p.debug = "true"
-				p.Provider.Debug = true
-			} else {
-				return d.ArgErr()
-			}
+			return d.ArgErr()
 		}
 		for nesting := d.Nesting(); d.NextBlock(nesting); {
 			switch d.Val() {
 			case "access_key":
 				if d.NextArg() {
 					p.Provider.AccessKey = d.Val()
-				}
-				if d.NextArg() {
-					return d.ArgErr()
-				}
-			case "debug":
-				if d.NextArg() {
-					p.debug = d.Val()
-					if debug, err := strconv.ParseBool(p.debug); err == nil {
-						p.Provider.Debug = debug
-					}
 				}
 				if d.NextArg() {
 					return d.ArgErr()
