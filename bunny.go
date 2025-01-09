@@ -24,6 +24,11 @@ func (Provider) CaddyModule() caddy.ModuleInfo {
 // Provision sets up the module. Implements caddy.Provisioner.
 func (p *Provider) Provision(ctx caddy.Context) error {
 	p.Provider.AccessKey = caddy.NewReplacer().ReplaceAll(p.Provider.AccessKey, "")
+
+	// Set up the logger. This will automatically enable debug in the provider.
+	p.Logger = func(msg string) {
+		ctx.Logger(p).Debug(msg)
+	}
 	return nil
 }
 
@@ -45,10 +50,9 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 		for nesting := d.Nesting(); d.NextBlock(nesting); {
 			switch d.Val() {
 			case "access_key":
-				if p.Provider.AccessKey != "" {
-					return d.Err("Access key already set")
+				if d.NextArg() {
+					p.Provider.AccessKey = d.Val()
 				}
-				p.Provider.AccessKey = d.Val()
 				if d.NextArg() {
 					return d.ArgErr()
 				}
