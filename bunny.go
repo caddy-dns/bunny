@@ -35,6 +35,10 @@ func (p *Provider) Provision(ctx caddy.Context) error {
 		p.Provider.Debug = debug
 	}
 
+	// Set up the logger
+	p.Logger = func(msg string) {
+		ctx.Logger(p).Debug(msg)
+	}
 	return nil
 }
 
