@@ -10,7 +10,10 @@ import (
 )
 
 // Provider lets Caddy read and manipulate DNS records hosted by this DNS provider.
-type Provider struct{ *bunny.Provider }
+type Provider struct {
+	*bunny.Provider
+	debug string
+}
 
 func init() {
 	caddy.RegisterModule(Provider{})
@@ -20,19 +23,24 @@ func init() {
 func (Provider) CaddyModule() caddy.ModuleInfo {
 	return caddy.ModuleInfo{
 		ID:  "dns.providers.bunny",
-		New: func() caddy.Module { return &Provider{new(bunny.Provider)} },
+		New: func() caddy.Module { return &Provider{Provider: new(bunny.Provider)} },
 	}
 }
 
 // Provision sets up the module. Implements caddy.Provisioner.
 func (p *Provider) Provision(ctx caddy.Context) error {
 	p.Provider.AccessKey = caddy.NewReplacer().ReplaceAll(p.Provider.AccessKey, "")
+	p.debug = caddy.NewReplacer().ReplaceAll(p.debug, "false")
+	if debug, err := strconv.ParseBool(p.debug); err == nil {
+		p.Provider.Debug = debug
+	}
+
 	return nil
 }
 
 // UnmarshalCaddyfile sets up the DNS provider from Caddyfile tokens. Syntax:
 //
-//	bunny [<access_token>] {
+//	bunny [<access_token>] [debug] {
 //	    access_key <access_token>
 //	    debug <true|false>
 //	}
@@ -45,6 +53,7 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 		}
 		if d.NextArg() {
 			if strings.EqualFold(d.Val(), "debug") {
+				p.debug = "true"
 				p.Provider.Debug = true
 			} else {
 				return d.ArgErr()
@@ -61,7 +70,8 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 				}
 			case "debug":
 				if d.NextArg() {
-					if debug, err := strconv.ParseBool(d.Val()); err == nil {
+					p.debug = d.Val()
+					if debug, err := strconv.ParseBool(p.debug); err == nil {
 						p.Provider.Debug = debug
 					}
 				}
