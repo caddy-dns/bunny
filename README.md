@@ -21,7 +21,6 @@ To use this module for the ACME DNS challenge, [configure the ACME issuer in you
 			"provider": {
 				"name": "bunny",
 				"access_key": "{env.BUNNY_API_KEY}",
-				"debug": "{env.BUNNY_DEBUG}"
 			}
 		}
 	}
@@ -41,3 +40,7 @@ You can replace `{env.BUNNY_API_KEY}` with the actual auth token if you prefer t
 ## Authenticating
 
 To authenticate you need to supply a Bunny.net [API Key](https://dash.bunny.net/account/settings).
+
+## Debugging
+
+When global debug mode is enabled, this module logs additional information.
