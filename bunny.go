@@ -4,6 +4,8 @@ import (
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/libdns/bunny"
+	"github.com/libdns/libdns"
+	"go.uber.org/zap"
 )
 
 // Provider lets Caddy read and manipulate DNS records hosted by this DNS provider.
@@ -26,8 +28,14 @@ func (p *Provider) Provision(ctx caddy.Context) error {
 	p.Provider.AccessKey = caddy.NewReplacer().ReplaceAll(p.Provider.AccessKey, "")
 
 	// Set up the logger. This will automatically enable debug in the provider.
-	p.Logger = func(msg string) {
-		ctx.Logger(p).Debug(msg)
+	p.Logger = func(msg string, records []libdns.Record) {
+		if len(records) > 1 {
+			ctx.Logger(p).Debug(msg, zap.Any("records", records))
+		} else if len(records) > 0 {
+			ctx.Logger(p).Debug(msg, zap.Any("record", records[0]))
+		} else {
+			ctx.Logger(p).Debug(msg)
+		}
 	}
 	return nil
 }
