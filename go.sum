@@ -26,8 +26,8 @@ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 github.com/klauspost/cpuid/v2 v2.0.12/go.mod h1:g2LTdtYhdyuGPqyWyv7qRAmj1WBqxuObKfj5c0PQa7c=
 github.com/klauspost/cpuid/v2 v2.2.7 h1:ZWSB3igEs+d0qvnxR/ZBzXVmxkgt8DdzP6m9pfuVLDM=
 github.com/klauspost/cpuid/v2 v2.2.7/go.mod h1:Lcz8mBdAVJIBVzewtcLocK12l3Y+JytZYpaMropDUws=
-github.com/libdns/bunny v1.2.0 h1:iZbYAAD0StC+siKoaPVjJa90qiEz0km/+jDMmJvEBjc=
-github.com/libdns/bunny v1.2.0/go.mod h1:tUfBopMefxj3B6zC+k9XmU6IvXRlM0NXpg2nlAgREUA=
+github.com/libdns/bunny v1.2.1 h1:w/nNYOkp34Yjyj4empKX6OsPWNBH4WRaOHFyT+cWRJM=
+github.com/libdns/bunny v1.2.1/go.mod h1:tUfBopMefxj3B6zC+k9XmU6IvXRlM0NXpg2nlAgREUA=
 github.com/libdns/libdns v0.2.2 h1:O6ws7bAfRPaBsgAYt8MDe2HcNBGC29hkZ9MX2eUSX3s=
 github.com/libdns/libdns v0.2.2/go.mod h1:4Bj9+5CQiNMVGf87wjX4CY3HQJypUHRuLvlsfsZqLWQ=
 github.com/mholt/acmez/v2 v2.0.1 h1:3/3N0u1pLjMK4sNEAFSI+bcvzbPhRpY383sy1kLHJ6k=
