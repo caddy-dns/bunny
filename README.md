@@ -31,7 +31,7 @@ or with the Caddyfile:
 
 ```
 tls {
-	acme_dns bunny {env.BUNNY_API_KEY}
+	dns bunny {env.BUNNY_API_KEY}
 }
 ```
 
