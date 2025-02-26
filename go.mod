@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	github.com/caddyserver/caddy/v2 v2.8.4
-	github.com/libdns/bunny v1.3.1
+	github.com/libdns/bunny v1.3.2
 	github.com/libdns/libdns v0.2.2
 	go.uber.org/zap v1.27.0
 )
