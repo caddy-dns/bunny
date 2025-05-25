@@ -6,7 +6,7 @@ toolchain go1.24.3
 
 require (
 	github.com/caddyserver/caddy/v2 v2.10.0
-	github.com/libdns/bunny v1.3.2-0.20250525125221-75da3033d8d3
+	github.com/libdns/bunny v1.4.0
 	github.com/libdns/libdns v1.0.0
 	go.uber.org/zap v1.27.0
 )
