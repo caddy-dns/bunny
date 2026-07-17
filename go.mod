@@ -11,10 +11,6 @@ require (
 	go.uber.org/zap v1.27.0
 )
 
-// TODO: drop this once libdns/bunny releases the DNSSEC/zone-management
-// version (the dnssec-and-zone-management branch) and bump the require above.
-replace github.com/libdns/bunny => ../libdns-bunny
-
 require (
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/mholt/acmez/v3 v3.1.2 // indirect
@@ -53,3 +49,7 @@ require (
 	golang.org/x/tools v0.39.0 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect
 )
+
+// TODO: drop this once libdns/bunny merges and releases the DNSSEC support
+// (libdns/bunny#13) and bump the require above to that release.
+replace github.com/libdns/bunny => github.com/evilmonkey19/libdns-bunny v1.6.2-0.20260717151823-0ef9191b5ad7
