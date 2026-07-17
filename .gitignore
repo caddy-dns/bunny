@@ -29,3 +29,6 @@ Icon?
 ehthumbs.db
 Thumbs.db
 .directory
+
+# Local API credentials for live tests
+.env
