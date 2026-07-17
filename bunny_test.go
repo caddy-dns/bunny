@@ -11,9 +11,10 @@ import (
 )
 
 type testCase struct {
-	input  string
-	setenv string
-	expect string
+	input        string
+	setenv       string
+	expect       string
+	expectDNSSEC bool
 }
 
 func TestUnmarshalCaddyFile(t *testing.T) {
@@ -32,6 +33,13 @@ func TestUnmarshalCaddyFile(t *testing.T) {
 		}, {
 			input:  `bunny 123`,
 			expect: "123",
+		}, {
+			input: `bunny {
+				access_key A123
+				dnssec
+			}`,
+			expect:       "A123",
+			expectDNSSEC: true,
 		},
 	}
 
@@ -56,6 +64,10 @@ func TestUnmarshalCaddyFile(t *testing.T) {
 
 			if tc.expect != p.Provider.AccessKey {
 				t.Errorf("Expected AccessKey to be '%s' but got '%s'", tc.expect, p.Provider.AccessKey)
+			}
+
+			if tc.expectDNSSEC != p.DNSSEC {
+				t.Errorf("Expected DNSSEC to be %v but got %v", tc.expectDNSSEC, p.DNSSEC)
 			}
 		})
 	}
